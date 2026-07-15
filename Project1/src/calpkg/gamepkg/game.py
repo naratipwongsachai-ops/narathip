@@ -1,0 +1,176 @@
+import tkinter as tk
+import random
+
+# ------------------------
+# Window
+# ------------------------
+WIDTH = 600
+HEIGHT = 700
+
+root = tk.Tk()
+root.title("Catch The Ball")
+root.geometry(f"{WIDTH}x{HEIGHT}")
+root.configure(bg="#1c1c1c")
+
+canvas = tk.Canvas(root, width=WIDTH, height=HEIGHT,
+                   bg="#202530", highlightthickness=0)
+canvas.pack()
+
+score = 0
+lives = 3
+speed = 5
+
+# ------------------------
+# Text
+# ------------------------
+score_text = canvas.create_text(
+    80, 25,
+    text=f"Score : {score}",
+    fill="white",
+    font=("Segoe UI",18,"bold")
+)
+
+life_text = canvas.create_text(
+    520,25,
+    text=f"❤ {lives}",
+    fill="red",
+    font=("Segoe UI",18,"bold")
+)
+
+# ------------------------
+# Basket
+# ------------------------
+basket_width = 120
+basket_height = 20
+
+basket = canvas.create_rectangle(
+    WIDTH//2-60,
+    HEIGHT-40,
+    WIDTH//2+60,
+    HEIGHT-20,
+    fill="#00d4ff",
+    outline=""
+)
+
+# ------------------------
+# Ball
+# ------------------------
+colors = ["#ff5f57","#fddb3a","#5efc82","#8a5cff","#00d4ff"]
+
+ball = canvas.create_oval(
+    280,40,320,80,
+    fill=random.choice(colors),
+    outline=""
+)
+
+# ------------------------
+# Move basket
+# ------------------------
+def move(event):
+    x = event.x
+
+    if x < basket_width//2:
+        x = basket_width//2
+
+    if x > WIDTH-basket_width//2:
+        x = WIDTH-basket_width//2
+
+    canvas.coords(
+        basket,
+        x-basket_width//2,
+        HEIGHT-40,
+        x+basket_width//2,
+        HEIGHT-20
+    )
+
+root.bind("<Motion>", move)
+
+# ------------------------
+# Game Loop
+# ------------------------
+def game():
+
+    global score
+    global lives
+    global speed
+
+    x1,y1,x2,y2 = canvas.coords(ball)
+
+    canvas.move(ball,0,speed)
+
+    x1,y1,x2,y2 = canvas.coords(ball)
+
+    bx1,by1,bx2,by2 = canvas.coords(basket)
+
+    # Catch
+    if y2 >= by1 and x2 >= bx1 and x1 <= bx2:
+
+        score += 1
+
+        canvas.itemconfig(score_text,
+                          text=f"Score : {score}")
+
+        reset_ball()
+
+    # Miss
+    elif y2 > HEIGHT:
+
+        lives -= 1
+
+        canvas.itemconfig(life_text,
+                          text=f"❤ {lives}")
+
+        if lives <= 0:
+
+            canvas.create_text(
+                WIDTH/2,
+                HEIGHT/2,
+                text=f"GAME OVER\nScore : {score}",
+                fill="white",
+                font=("Segoe UI",32,"bold")
+            )
+
+            return
+
+        reset_ball()
+
+    root.after(20,game)
+
+# ------------------------
+# Reset Ball
+# ------------------------
+def reset_ball():
+
+    global speed
+
+    x = random.randint(40,560)
+
+    canvas.coords(ball,
+                  x-20,40,
+                  x+20,80)
+
+    canvas.itemconfig(
+        ball,
+        fill=random.choice(colors)
+    )
+
+    if speed < 15:
+        speed += 0.2
+
+game()
+
+root.mainloop()
+
+if __name__ == "__main__":
+    print("Run From game.py")
+    print(__name__)  # This will print "__main__" when run directly
+    import tkinter as tk
+
+import tkinter as tk
+
+def main():
+    root = tk.Tk()
+
+    # โค้ดเกมทั้งหมด
+
+    root.mainloop()
